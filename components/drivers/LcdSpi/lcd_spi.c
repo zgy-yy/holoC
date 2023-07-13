@@ -35,7 +35,7 @@ static const spi_bus_config_t busConfig = {
         .sclk_io_num =PIN_SCK,
         .quadwp_io_num=-1,
         .quadhd_io_num=-1,
-        .max_transfer_sz=4096
+        .max_transfer_sz=4094
 };
 
 static const spi_device_interface_config_t deviceConfig = {
@@ -66,20 +66,21 @@ void spi_tans_data(const uint8_t cmd) {
 void LCD_WR_REG(uint8_t dat) {
     LCD_DC_Clr();//写命令
     spi_tans_data(dat);
-    LCD_DC_Set();//写数据
-
 }
 
 void LCD_WR_DATA8(uint8_t dat) {
+    LCD_DC_Set();//写数据
     spi_tans_data(dat);
 }
 
 void LCD_WR_DATA(uint16_t dat) {
+    LCD_DC_Set();//写数据
     spi_tans_data(dat >> 8);
     spi_tans_data(dat);
 }
 
 void LCD_WR_DATA16(uint16_t dat) {
+    LCD_DC_Set();//写数据
     spi_tans_data(dat >> 8);
     spi_tans_data(dat);
 }

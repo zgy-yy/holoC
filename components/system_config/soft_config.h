@@ -5,6 +5,6 @@
 #ifndef HOLOC_SOFT_CONFIG_H
 #define HOLOC_SOFT_CONFIG_H
 
-#define font_path "S:/myFont.bin"
+#define font_path "S:/system/myFont.bin"
 
 #endif //HOLOC_SOFT_CONFIG_H
