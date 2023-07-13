@@ -28,6 +28,7 @@
 #define MY_DISP_VER_RES    240
 #endif
 
+#define LV_H_NUM    (120)   //缓冲区用多少行
 /**********************
  *      TYPEDEFS
  **********************/
@@ -44,7 +45,7 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 /**********************
  *  STATIC VARIABLES
  **********************/
-
+static lv_disp_drv_t disp_drv; /*Descriptor of a display driver  ^zgy add*/
 /**********************
  *      MACROS
  **********************/
@@ -88,12 +89,18 @@ void lv_port_disp_init(void) {
 //    static lv_disp_draw_buf_t draw_buf_dsc_1;
 //    static lv_color_t buf_1[MY_DISP_HOR_RES * 10];                          /*A buffer for 10 rows*/
 //    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * 10);   /*Initialize the display buffer*/
+    static lv_disp_draw_buf_t draw_buf_dsc_1;
+    lv_color_t *buf_1 = heap_caps_malloc(MY_DISP_HOR_RES * LV_H_NUM * sizeof(lv_color_t), MALLOC_CAP_DMA);
+    lv_color_t *buf_2 = heap_caps_malloc(MY_DISP_HOR_RES * LV_H_NUM * sizeof(lv_color_t), MALLOC_CAP_DMA);
+
+    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, buf_2,
+                          MY_DISP_HOR_RES * LV_H_NUM);   /*Initialize the display buffer*/
 
     /* Example for 2) */
-    static lv_disp_draw_buf_t draw_buf_dsc_2;
-    static lv_color_t buf_2_1[MY_DISP_HOR_RES * 10];                        /*A buffer for 10 rows*/
-    static lv_color_t buf_2_2[MY_DISP_HOR_RES * 10];                        /*An other buffer for 10 rows*/
-    lv_disp_draw_buf_init(&draw_buf_dsc_2, buf_2_1, buf_2_2, MY_DISP_HOR_RES * 10);   /*Initialize the display buffer*/
+//    static lv_disp_draw_buf_t draw_buf_dsc_2;
+//    static lv_color_t buf_2_1[MY_DISP_HOR_RES * 10];                        /*A buffer for 10 rows*/
+//    static lv_color_t buf_2_2[MY_DISP_HOR_RES * 10];                        /*An other buffer for 10 rows*/
+//    lv_disp_draw_buf_init(&draw_buf_dsc_2, buf_2_1, buf_2_2, MY_DISP_HOR_RES * 10);   /*Initialize the display buffer*/
 
     /* Example for 3) also set disp_drv.full_refresh = 1 below*/
 //    static lv_disp_draw_buf_t draw_buf_dsc_3;
@@ -106,7 +113,7 @@ void lv_port_disp_init(void) {
      * Register the display in LVGL
      *----------------------------------*/
 
-    static lv_disp_drv_t disp_drv;                         /*Descriptor of a display driver*/
+//    static lv_disp_drv_t disp_drv;                         /*Descriptor of a display driver*/
     lv_disp_drv_init(&disp_drv);                    /*Basic initialization*/
 
     /*Set up the functions to access to your display*/
@@ -119,7 +126,7 @@ void lv_port_disp_init(void) {
     disp_drv.flush_cb = disp_flush;
 
     /*Set a display buffer*/
-    disp_drv.draw_buf = &draw_buf_dsc_2;
+    disp_drv.draw_buf = &draw_buf_dsc_1;
 
     /*Required for Example 3)*/
     //disp_drv.full_refresh = 1;
@@ -131,6 +138,7 @@ void lv_port_disp_init(void) {
 
     /*Finally register the driver*/
     lv_disp_drv_register(&disp_drv);
+    lv_disp_set_bg_color(lv_disp_get_default(), lv_color_make(0x00, 0x00, 0x00));
 }
 
 /**********************
@@ -179,9 +187,13 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 
     /*IMPORTANT!!!
      *Inform the graphics library that you are ready with the flushing*/
-    lv_disp_flush_ready(disp_drv);
+//    lv_disp_flush_ready(disp_drv);
 }
 
+void spi_disp_flush_ready(void) //^zgy add
+{
+    lv_disp_flush_ready(&disp_drv);
+}
 /*OPTIONAL: GPU INTERFACE*/
 
 /*If your MCU has hardware accelerator (GPU) then you can use it to fill a memory with a color*/

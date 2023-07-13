@@ -17,6 +17,18 @@ void delay_ms(int i) {
 
 static spi_device_handle_t spi;
 
+extern void spi_disp_flush_ready(void);
+
+
+IRAM_ATTR  void spi_ready(spi_transaction_t *trans) {
+    uint32_t spi_cnt = (uint32_t) trans->user;
+
+    if (spi_cnt == 4) {
+        spi_disp_flush_ready();
+    }
+}
+
+
 static const spi_bus_config_t busConfig = {
         .miso_io_num=-1,
         .mosi_io_num=PIN_MOSI,
@@ -31,7 +43,8 @@ static const spi_device_interface_config_t deviceConfig = {
         .mode=3,
         .spics_io_num = -1,
         .queue_size =80,
-        .cs_ena_posttrans =10,
+        .cs_ena_pretrans = 1,
+        .post_cb = spi_ready,//注册一个SPI调用完成的回调
 };
 
 void vspi_init() {
@@ -42,12 +55,12 @@ void vspi_init() {
 void spi_tans_data(const uint8_t cmd) {
     esp_err_t ret;
     spi_transaction_t t;
-    memset(&t, 0, sizeof(t));
-    t.length = 8;
-    t.tx_buffer = &cmd;
-    t.user = (void *) 0;
-    ret = spi_device_polling_transmit(spi, &t);
-    assert(ret == ESP_OK);
+    memset(&t, 0, sizeof(t));       //Zero out the transaction
+    t.length = 8;                     //Command is 8 bits
+    t.tx_buffer = &cmd;               //The data is the cmd itself
+    t.user = (void *) 0;                //D/C needs to be set to 0
+    ret = spi_device_polling_transmit(spi, &t);  //Transmit!
+    assert(ret == ESP_OK);            //Should have had no issues.
 }
 
 void LCD_WR_REG(uint8_t dat) {

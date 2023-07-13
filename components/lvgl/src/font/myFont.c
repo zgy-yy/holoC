@@ -12,6 +12,7 @@
 
 #include "lv_font.h"
 #include "lvgl/src/misc/lv_fs.h"
+#include "system_config/soft_config.h"
 
 typedef struct {
     uint16_t min;
@@ -44,7 +45,6 @@ static x_header_t __g_xbf_hd = {
 static uint8_t __g_font_buf[144];
 static lv_fs_file_t font_f;
 static uint32_t font_resCount;
-#define font_path "S:/myFont4.bin"
 
 static uint8_t *__user_font_getdata(int offset, int size) {
     //如字模保存在SPI FLASH, SPIFLASH_Read(__g_font_buf,offset,size);
