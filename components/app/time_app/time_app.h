@@ -2,7 +2,8 @@
 
 #define HOLOC_TIME_APP_H
 
-static char *TAG="time_app";
+#include "ui_time.h"
+
 
 void time_app(void *arg);
 

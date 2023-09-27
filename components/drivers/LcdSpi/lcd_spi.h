@@ -11,6 +11,7 @@
 #include <string.h>
 
 #define USE_HORIZONTAL 0  //设置横屏或者竖屏显示 0或1为竖屏 2或3为横屏
+#define  mirroring 1 //是否镜像显示
 #define LCD_W 240
 #define LCD_H 240
 

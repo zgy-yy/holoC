@@ -13,7 +13,7 @@
 #include "esp_vfs_fat.h"
 #include "sdmmc_cmd.h"
 
-static const char *TAG = "SDCARD";
+#define  TAG  "SDCARD"
 
 #define MOUNT_POINT "/S"
 

@@ -2,9 +2,9 @@
 #include "http.h"
 #include "esp_http_client.h"
 #include "esp_log.h"
+#include "wifi.h"
 
-
-static char *TAG = "http_client";
+static char *TAG = "HTTP_CLIENT";
 
 static char *res_data;
 
@@ -64,6 +64,15 @@ static esp_err_t http_client_event_handler(esp_http_client_event_t *evt) {
 }
 
 char *http_get(char *url, char *params) {
+    char *res;
+    res = (char *) malloc(8);
+    strcpy(res, "no data");
+// 获取默认网络接口
+    char *ip = getIp();
+    if (strcmp(ip, "0.0.0.0") == 0) {
+        return res;
+    }
+
     esp_err_t ret;
     const esp_http_client_config_t cfg = {
             .method=HTTP_METHOD_GET,
@@ -84,16 +93,11 @@ char *http_get(char *url, char *params) {
     }
     esp_http_client_cleanup(httpClient);
 
-    char *str;
     if (res_data != NULL) {
-        str = (char *) malloc(strlen(res_data));
-        strcpy(str, res_data);
-    } else {
-        str = (char *) malloc(8);
-        strcpy(str, "no data");
+        res = (char *) malloc(strlen(res_data));
+        strcpy(res, res_data);
     }
-
-    return str;
+    return res;
 }
 
 void http_post(char *url, char *postData) {

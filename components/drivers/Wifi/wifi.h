@@ -4,10 +4,15 @@
 
 #define HOLOC_WIFI_H
 
-static char* Tag ="WIFI";
+#define AP_SSID  "holoC"
+#define AP_PASS  "12345678"
 
 void wifiInit();
 
-void wifiScanAP();
+char *wifiScanAP();
+
+char *getIp();
+
+void wifi_connect_ap(char *ssid, char *password);
 
 #endif
